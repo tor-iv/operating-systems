@@ -227,7 +227,7 @@ int main(int argc, char* argv[]) {
 
     return 0;
 }
-void run(char* words[100]) {
+void run(char *words[100]) {
 	int status;
 	pid_t pid = fork();
 	// shift to get rid of first word / command

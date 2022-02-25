@@ -13,19 +13,8 @@
 #include <string.h>
 #include <stdbool.h>
 
-/*
-test functions from previous attempts
+void sighandler(int sig) {};
 
-void stopper(int pid) {
-    printf("myshell: process [%d] stopped");
-}
-void continuer(int pid) {
-    printf("myshell: process [%d] continued");
-}
-void killer(int pid) {
-    printf("myshell: process [%d] killed");
-}
-*/
 int main(int argc, char* argv[]) {
     
     while (true) {
@@ -133,15 +122,6 @@ int main(int argc, char* argv[]) {
                 printf("myshell: process [%d] killed\n", atoi(words[1]));
             }
         }
-        // stop process 
-        else if (strcmp("stop", words[0]) == 0) {
-            // stop failed
-            if (kill(atoi(words[1]), SIGSTOP) != 0) {
-                printf("myshell: couldn't stop process [%d]: %s\n", atoi(words[1]), strerror(errno));
-            } else {
-                printf("myshell: process [%d] stopped\n", atoi(words[1]));
-            }
-        }
         // wait
         else if (strcmp("wait", words[0]) == 0) {
             int status, child;
@@ -172,6 +152,7 @@ int main(int argc, char* argv[]) {
 		}
 		// watchdog
 		else if (strcmp("watchdog", words[0]) == 0) {
+			signal(SIGCHLD, sighandler);
 			pid_t pid = fork();
 			int time = atoi(words[1]);
 			int status;
@@ -200,10 +181,11 @@ int main(int argc, char* argv[]) {
             // other proc
             else {
 				printf("myshell: proc [%d] initiated\n", pid);
-				signal(SIGINT, sigaddset);
-				usleep(time*(1000000));
-				if (kill(pid, SIGKILL) == 0) {	
+				if (sleep(time) == 0) {	
 					printf("myshell: process %d exceeded the time limit, killing it...\n", pid);
+					if(kill(pid,SIGKILL) < 0) {
+						printf("Error: unable to kill process %d\n",pid);
+					}
 				}
             }
             // cleaning
@@ -213,16 +195,6 @@ int main(int argc, char* argv[]) {
                 printf("myshell: process [%d] exited abnoramally with signal %d: %s\n", pid, status, strsignal(status));
             } else {
                 printf("myshell: process [%d] exited normally with status %d\n", pid, status);
-            }
-        }
-        // continue
-        else if (strcmp("continue", words[0]) == 0) {
-            // continue failed
-            if (kill(atoi(words[1]), SIGCONT) != 0) {
-
-                printf("myshell: couldn't continue process [%d]: %s\n", atoi(words[1]), strerror(errno));
-            } else {
-                printf("myshell: process [%d] continued\n", atoi(words[1]));
             }
         }
 		// chdir
