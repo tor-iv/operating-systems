@@ -33,14 +33,14 @@ void test(int phnum)
 		sleep(2);
 
 		// print state
-		printf("Philosopher %d takes fork %d and %d\n", phnum + 1, LEFT + 1, phnum + 1);
+		printf("Philosopher %d takes chopsitcks  %d and %d\n", phnum + 1, LEFT + 1, phnum + 1);
 		printf("Philosopher %d is Eating\n", phnum + 1);
 		sem_post(&S[phnum]);
 	}
 }
 
-// pickup fork
-void pick_fork(int phnum) {
+// pickup chopsticks
+void pick_chop(int phnum) {
 	sem_wait(&mutex);
 	state[phnum] = HUNGRY;
 	printf("Philosopher %d is Hungry\n", phnum + 1);
@@ -52,12 +52,12 @@ void pick_fork(int phnum) {
 	sleep(1);
 }
 
-// put down fork
-void put_fork(int phnum) {
+// put down chop
+void put_chop(int phnum) {
 	sem_wait(&mutex);
 	// state that thinking
 	state[phnum] = THINKING;
-	printf("Philosopher %d putting fork %d and %d down\n", phnum + 1, LEFT + 1, phnum + 1);
+	printf("Philosopher %d putting chop %d and %d down\n", phnum + 1, LEFT + 1, phnum + 1);
 	printf("Philosopher %d is thinking\n", phnum + 1);
 	//check left and right philosopher
 	test(RIGHT);
@@ -71,8 +71,8 @@ void* philosopher(void* num){
 	while (1) {
 		int* i = num;
 		sleep(1);
-		pick_fork(*i);
-		put_fork(*i);
+		pick_chop(*i);
+		put_chop(*i);
 	}
 }
 
